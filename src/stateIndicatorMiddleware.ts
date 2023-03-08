@@ -1,14 +1,19 @@
 import { Middleware, MiddlewareAPI, Dispatch, AnyAction } from 'redux';
-import { setAppState } from './stateSlice';
+import { renderStateIndicator } from './renderStateIndicator.js';
 
-
-const stateIndicatorMiddleware: Middleware = (store: MiddlewareAPI) => (next: Dispatch<AnyAction>) => (action: AnyAction) => {
+export const stateIndicatorMiddleware: Middleware =
+  (store: MiddlewareAPI) =>
+  (next: Dispatch<AnyAction>) =>
+  (action: AnyAction) => {
     const result = next(action);
     const state = store.getState();
-   
-    store.dispatch(setAppState(state));
-  
-    return result;
-};
 
-export default stateIndicatorMiddleware;
+    const size = Number(
+      (new Blob([JSON.stringify(state)]).size / 1024).toFixed(1),
+    );
+    console.log(size);
+
+    renderStateIndicator(size);
+
+    return result;
+  };
